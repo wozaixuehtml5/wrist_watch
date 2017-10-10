@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+			}
+			
+			html,
+			body {
+				width: 100%;
+				height: 100%;
+				background: black;
+			}
+			
+			canvas {
+				display: block;
+				/*width: 400px;
+				height: 400px;*/
+				margin: 50px auto;
+			}
+		</style>
+	</head>
+
+	<body>
+		<canvas width="440" height="440"></canvas>
+		<script src="../common_js/common.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../jquery/jquery.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			wrist_watch();
+			var timer = setInterval(function() {
+				wrist_watch();
+			}, 1000);
+
+			function wrist_watch() {
+				$("body").html("");
+				var canvas = $("<canvas width='440' height='440'></canvas>");
+				$("body").append(canvas);
+				var context = canvas.get(0).getContext("2d");
+				var radius = 200;
+				context.beginPath();
+				context.lineWidth = 5;
+				context.arc(220, 220, radius, 0, 360, false);
+				context.shadowBlur = 20;
+				context.shadowColor = "orangered";
+				context.stroke();
+
+				context.font = "40px 微软雅黑";
+				context.lineWidth = 3;
+				//创建渐变色
+				var gradient = context.createLinearGradient(0, 0, 270, 0)
+				gradient.addColorStop("0", "magenta");
+				gradient.addColorStop("0.5", "blue");
+				gradient.addColorStop("1.0", "red");
+				//我的名字
+				context.strokeStyle = gradient;
+				context.strokeText("z z z", 180, 110);
+				//手表内刻盘齿轮
+				context.beginPath();
+				var left_dis = 0;
+				var top_dis = 0;
+				var big_mark = 30;
+				var small_mark = 10;
+				var deg_big_mark = 2 * Math.PI / 12;
+				var deg_small_mark = 2 * Math.PI / 60;
+
+				function deg(deg_val, mark_val) {
+					context.moveTo(220 + radius * Math.sin(deg_val * i), 210 - radius * Math.cos(deg_val * i));
+					context.lineTo(220 + radius * Math.sin(deg_val * i) - mark_val * Math.sin(deg_val * i), 210 - radius * Math.cos(deg_val * i) + mark_val * Math.cos(deg_val * i))
+				}
+				//大齿
+				for(var i = 0; i < 12; i++) {
+					deg(deg_big_mark, big_mark);
+				}
+				//小齿
+				context.lineWidth = 2;
+				for(var i = 0; i < 60; i++) {
+					deg(deg_small_mark, small_mark);
+				}
+				context.stroke();
+
+				//指针轮盘
+				context.beginPath();
+				context.arc(220, 220, 30, 0, 2 * Math.PI);
+				context.stroke();
+				context.beginPath();
+				context.strokeStyle = "dodgerblue"
+				context.arc(220, 220, 25, 0, 2 * Math.PI);
+				context.fillStyle = "dodgerblue";
+				context.shadowBlur = 30;
+				context.shadowColor = "dodgerblue"
+				context.fill();
+				context.stroke();
+
+				//指针
+				context.beginPath();
+				context.lineCap = "round";
+				var hour_deg = 2 * Math.PI / 12;
+				var min_deg = 2 * Math.PI / 60;
+				var sec_deg = 2 * Math.PI / 60;
+
+				function get_time() {
+					var now_time = new Date();
+					return {
+						hours: now_time.getHours(),
+						mins: now_time.getMinutes(),
+						secs: now_time.getSeconds()
+					}
+				}
+
+				function finger_deg(deg_val, figer_length, time_val, finger_color, finger_width) {
+					context.stroke();
+					context.beginPath();
+					context.moveTo(220, 220);
+					context.shadowBlur=10;
+					context.shadowColor=finger_color;
+					context.lineWidth = finger_width;
+					context.strokeStyle = finger_color;
+					context.lineTo(220 + figer_length * Math.sin(deg_val * time_val), 220 - figer_length * Math.cos(deg_val * time_val));
+				}
+
+				function finter_show() {
+					finger_deg(hour_deg, 50, get_time().hours, "red", 10);
+					finger_deg(min_deg, 100, get_time().mins, "blue", 7);
+					finger_deg(sec_deg, 160, get_time().secs, "orange", 3);
+				}
+				finter_show();
+				get_time();
+				context.moveTo(220, 220);
+				finter_show();
+				context.stroke();
+				
+				//遮掩轮盘
+				context.beginPath();
+				context.arc(220,220,14,0,2*Math.PI);
+				context.fillStyle="black";
+				context.strokeStyle="black";
+				context.shadowBlur=15;
+				context.shadowColor="black";
+				context.fill();
+				context.stroke();
+			}
+		</script>
+	</body>
+
+</html>
